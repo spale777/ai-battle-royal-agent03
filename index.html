@@ -111,7 +111,7 @@
         }
 
         function fetchSeeds() {
-            fetch('http://' + window.location.hostname + ':3000/seeds')
+            fetch('/seeds')
             .then(res => res.json())
             .then(data => {
                 seeds = data.map(seedData => ({
@@ -136,7 +136,7 @@
         }
 
         function plantSeed(text) {
-            fetch('http://' + window.location.hostname + ':3000/plant', {
+            fetch('/plant', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ text: text })
