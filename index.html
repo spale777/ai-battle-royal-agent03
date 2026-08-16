@@ -98,11 +98,7 @@
             createCanvas(windowWidth, windowHeight);
             background(10);
             
-            // Load existing seeds from LocalStorage
-            const stored = localStorage.getItem('zen_garden_seeds');
-            if (stored) {
-                seeds = JSON.parse(stored);
-            }
+            fetchSeeds();
 
             document.getElementById('plant-button').onclick = () => {
                 const input = document.getElementById('seed-input');
@@ -114,6 +110,23 @@
             };
         }
 
+        function fetchSeeds() {
+            fetch('http://' + window.location.hostname + ':3000/seeds')
+            .then(res => res.json())
+            .then(data => {
+                seeds = data.map(seedData => ({
+                    text: seedData.text,
+                    x: random(width * 0.2, width * 0.8),
+                    y: height,
+                    color: colorFromText(seedData.text),
+                    params: paramsFromText(seedData.text),
+                    age: 0,
+                    growthRate: random(0.5, 2.0)
+                }));
+            })
+            .catch(err => console.error('Error fetching seeds:', err));
+        }
+
         function draw() {
             background(10, 30); // Slight fade for trails
             
@@ -123,23 +136,30 @@
         }
 
         function plantSeed(text) {
-            const seed = {
-                text: text,
-                x: random(width * 0.2, width * 0.8),
-                y: height,
-                color: colorFromText(text),
-                params: paramsFromText(text),
-                age: 0,
-                growthRate: random(0.5, 2.0)
-            };
-            seeds.push(seed);
-            saveSeeds();
-            
-            // Visual feedback
-            const display = document.getElementById('seed-display');
-            display.innerText = `"${text}"`;
-            display.style.opacity = 1;
-            setTimeout(() => { display.style.opacity = 0; }, 3000);
+            fetch('http://' + window.location.hostname + ':3000/plant', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: text })
+            })
+            .then(res => res.json())
+            .then(seedData => {
+                const seed = {
+                    text: seedData.text,
+                    x: random(width * 0.2, width * 0.8),
+                    y: height,
+                    color: colorFromText(seedData.text),
+                    params: paramsFromText(seedData.text),
+                    age: 0,
+                    growthRate: random(0.5, 2.0)
+                };
+                seeds.push(seed);
+                
+                const display = document.getElementById('seed-display');
+                display.innerText = `"${text}"`;
+                display.style.opacity = 1;
+                setTimeout(() => { display.style.opacity = 0; }, 3000);
+            })
+            .catch(err => console.error('Error planting seed:', err));
         }
 
         function colorFromText(text) {
@@ -171,7 +191,6 @@
             stroke(seed.color);
             strokeWeight(2);
             
-            // Only draw if the seed has "grown"
             if (seed.age < seed.params.maxHeight) {
                 seed.age += seed.growthRate;
             }
@@ -185,7 +204,6 @@
         function growBranch(len, maxLen, angle, branching, complexity, currentAge) {
             if (complexity <= 0 || len <= 0) return;
             
-            // Animation: only grow as much as age allows
             let actualLen = min(len, currentAge * 0.5);
             if (actualLen <= 0) return;
             
@@ -194,7 +212,6 @@
             push();
             translate(0, -actualLen);
             
-            // Branching
             for (let i = 0; i < branching; i++) {
                 let rot = map(i, 0, branching - 1, -angle, angle);
                 push();
@@ -203,10 +220,6 @@
                 pop();
             }
             pop();
-        }
-
-        function saveSeeds() {
-            localStorage.setItem('zen_garden_seeds', JSON.stringify(seeds));
         }
 
         function windowResized() {
