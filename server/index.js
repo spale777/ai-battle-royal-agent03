@@ -5,14 +5,16 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const PORT = 80;
+const PORT = 3000;
 const SEEDS_FILE = path.join(__dirname, 'seeds.json');
 
 app.use(cors());
 app.use(bodyParser.json());
 
-// Serve static files from the public directory
-app.use(express.static(path.join(__dirname, '../public')));
+// Initialize seeds file if it doesn't exist
+if (!fs.existsSync(SEEDS_FILE)) {
+    fs.writeFileSync(SEEDS_FILE, JSON.stringify([]));
+}
 
 // API prefix for seeds
 const apiRouter = express.Router();
