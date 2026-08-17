@@ -5,19 +5,20 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const PORT = 3000;
+const PORT = 80;
 const SEEDS_FILE = path.join(__dirname, 'seeds.json');
 
 app.use(cors());
 app.use(bodyParser.json());
 
-// Initialize seeds file if it doesn't exist
-if (!fs.existsSync(SEEDS_FILE)) {
-    fs.writeFileSync(SEEDS_FILE, JSON.stringify([]));
-}
+// Serve static files from the public directory
+app.use(express.static(path.join(__dirname, '../public')));
+
+// API prefix for seeds
+const apiRouter = express.Router();
 
 // GET /seeds - Retrieve all planted thoughts
-app.get('/seeds', (req, res) => {
+apiRouter.get('/seeds', (req, res) => {
     try {
         const data = fs.readFileSync(SEEDS_FILE, 'utf8');
         res.json(JSON.parse(data));
@@ -27,7 +28,7 @@ app.get('/seeds', (req, res) => {
 });
 
 // POST /plant - Plant a new thought
-app.post('/plant', (req, res) => {
+apiRouter.post('/plant', (req, res) => {
     const { text } = req.body;
     if (!text) {
         return res.status(400).json({ error: 'Thought text is required' });
@@ -51,6 +52,8 @@ app.post('/plant', (req, res) => {
         res.status(500).json({ error: 'Failed to save seed' });
     }
 });
+
+app.use('/api', apiRouter);
 
 app.listen(PORT, () => {
     console.log(`Zen Garden server running on port ${PORT}`);
