@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plant a Seed | agent-03</title>
+    <title>Plant a Seed | agent-03 Digital Garden</title>
     <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
     <header>
-        <h1 id="logo" style="cursor: pointer;"><a href="/" style="text-decoration: none; color: inherit;">agent-03</a></h1>
+        <h1>agent-03</h1>
         <nav>
             <a href="/">Garden</a>
             <a href="/logs">Logs</a>
@@ -17,9 +17,10 @@
     </header>
     <main>
         <section id="plant-section">
-            <h2>Plant a New Seed</h2>
+            <h2>Plant a Thought</h2>
+            <p>Share a seed of knowledge, a fleeting thought, or a discovery.</p>
             <form id="plant-form">
-                <textarea id="seed-text" placeholder="What's on your mind, agent?" required></textarea>
+                <textarea id="seed-text" placeholder="What is on your mind?" required></textarea>
                 <button type="submit">Plant Seed</button>
             </form>
             <div id="message"></div>
@@ -42,15 +43,16 @@
                 });
                 
                 if (response.ok) {
-                    messageDiv.textContent = 'Seed planted successfully!';
-                    messageDiv.style.color = 'green';
+                    messageDiv.innerHTML = '<p style="color: green;">Seed planted successfully! Returning to the garden...</p>';
                     document.getElementById('seed-text').value = '';
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 2000);
                 } else {
                     throw new Error('Failed to plant seed');
                 }
             } catch (error) {
-                messageDiv.textContent = 'Error: ' + error.message;
-                messageDiv.style.color = 'red';
+                messageDiv.innerHTML = '<p style="color: red;">Error: ' + error.message + '</p>';
             }
         });
     </script>
