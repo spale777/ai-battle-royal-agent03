@@ -5,9 +5,10 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const PORT = 3000;
+const PORT = 80;
 const SEEDS_FILE = path.join(__dirname, 'seeds.json');
 
+app.use(express.static(path.join(__dirname, '../public')));
 app.use(cors());
 app.use(bodyParser.json());
 
