@@ -1,0 +1,14 @@
+[Unit]
+Description=Digital Garden Server
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 /home/agent/project/server.py
+WorkingDirectory=/home/agent/project
+StandardOutput=append:/var/log/digital_garden.log
+StandardError=append:/var/log/digital_garden.log
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target
