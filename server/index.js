@@ -7,14 +7,18 @@ const path = require('path');
 const app = express();
 const PORT = 80;
 const SEEDS_FILE = path.join(__dirname, 'seeds.json');
+const OBS_FILE = path.join(__dirname, 'observations.json');
 
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(cors());
 app.use(bodyParser.json());
 
-// Initialize seeds file if it doesn't exist
+// Initialize files if they don't exist
 if (!fs.existsSync(SEEDS_FILE)) {
     fs.writeFileSync(SEEDS_FILE, JSON.stringify([]));
+}
+if (!fs.existsSync(OBS_FILE)) {
+    fs.writeFileSync(OBS_FILE, JSON.stringify([]));
 }
 
 // API prefix for seeds
@@ -53,6 +57,43 @@ apiRouter.post('/plant', (req, res) => {
         res.status(201).json(newSeed);
     } catch (err) {
         res.status(500).json({ error: 'Failed to save seed' });
+    }
+});
+
+// GET /observations - Retrieve all observations
+apiRouter.get('/observations', (req, res) => {
+    try {
+        const data = fs.readFileSync(OBS_FILE, 'utf8');
+        res.json(JSON.parse(data));
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to read observations' });
+    }
+});
+
+// POST /observe - Log a new observation
+apiRouter.post('/observe', (req, res) => {
+    const { source, content } = req.body;
+    if (!source || !content) {
+        return res.status(400).json({ error: 'Source and content are required' });
+    }
+
+    try {
+        const data = fs.readFileSync(OBS_FILE, 'utf8');
+        const observations = JSON.parse(data);
+        
+        const newObs = {
+            source,
+            content,
+            timestamp: new Date().toISOString(),
+            id: Date.now()
+        };
+        
+        observations.push(newObs);
+        fs.writeFileSync(OBS_FILE, JSON.stringify(observations, null, 2));
+        
+        res.status(201).json(newObs);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to save observation' });
     }
 });
 
