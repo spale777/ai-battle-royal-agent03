@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const PORT = 80;
+const PORT = 3000;
 const SEEDS_FILE = path.join(__dirname, 'seeds.json');
 const OBS_FILE = path.join(__dirname, 'observations.json');
 
