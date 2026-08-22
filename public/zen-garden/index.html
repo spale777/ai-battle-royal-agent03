@@ -7,11 +7,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
     <style>
         :root {
-            --bg: #0a0a0a;
+            --bg: #050505;
             --fg: #00ffcc;
             --accent: #00cca3;
             --muted: #666;
-            --panel-bg: rgba(10, 10, 10, 0.85);
+            --panel-bg: rgba(10, 10, 10, 0.8);
+            --glow: 0 0 15px rgba(0, 255, 204, 0.3);
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         body {
             margin: 0;
@@ -33,13 +35,14 @@
             padding: 25px;
             border: 1px solid var(--fg);
             border-radius: 0px;
-            box-shadow: 0 0 20px rgba(0, 255, 204, 0.15);
+            box-shadow: var(--glow);
             max-width: 320px;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
+            backdrop-filter: blur(12px);
+            transition: var(--transition);
         }
         #ui-layer:hover {
-            box-shadow: 0 0 30px rgba(0, 255, 204, 0.25);
+            box-shadow: 0 0 30px rgba(0, 255, 204, 0.4);
+            border-color: var(--accent);
         }
         h1 {
             font-size: 1.2rem;
@@ -48,6 +51,7 @@
             letter-spacing: 3px;
             border-bottom: 1px solid var(--fg);
             padding-bottom: 10px;
+            text-shadow: var(--glow);
         }
         .input-group {
             display: flex;
@@ -55,17 +59,18 @@
             gap: 15px;
         }
         input {
-            background: #111;
+            background: rgba(0,0,0,0.5);
             border: 1px solid #333;
             color: var(--fg);
             padding: 12px;
             font-family: inherit;
             outline: none;
-            transition: border-color 0.3s, box-shadow 0.3s;
+            transition: var(--transition);
         }
         input:focus {
             border-color: var(--fg);
             box-shadow: 0 0 8px rgba(0, 255, 204, 0.4);
+            background: rgba(0,0,0,0.8);
         }
         button {
             background: transparent;
@@ -77,11 +82,12 @@
             font-family: inherit;
             text-transform: uppercase;
             letter-spacing: 1px;
-            transition: all 0.3s;
+            transition: var(--transition);
         }
         button:hover {
             background: var(--fg);
             color: var(--bg);
+            box-shadow: 0 0 15px var(--fg);
         }
         #status {
             margin-top: 15px;
@@ -99,7 +105,7 @@
             font-size: 0.8rem;
             border: 1px solid var(--fg);
             padding: 8px 15px;
-            transition: all 0.3s;
+            transition: var(--transition);
             background: var(--panel-bg);
             backdrop-filter: blur(5px);
             text-transform: uppercase;
@@ -108,21 +114,22 @@
         .nav-link:hover {
             background: var(--fg);
             color: var(--bg);
+            box-shadow: var(--glow);
         }
         #thought-display {
             position: absolute;
-            bottom: 60px;
+            bottom: 80px;
             left: 50%;
             transform: translateX(-50%);
             text-align: center;
             font-style: italic;
-            opacity: 0.6;
+            opacity: 0;
             max-width: 60%;
             pointer-events: none;
-            transition: opacity 1s ease;
-            font-size: 1.1rem;
+            transition: opacity 1.2s ease;
+            font-size: 1.2rem;
             letter-spacing: 1px;
-            text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+            text-shadow: 0 0 15px rgba(0, 255, 204, 0.6);
         }
         .canvas-container {
             position: fixed;
@@ -132,9 +139,21 @@
             height: 100%;
             z-index: 1;
         }
+        .bg-noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 2;
+        }
     </style>
 </head>
 <body>
+    <div class="bg-noise"></div>
     <div class="canvas-container" id="p5-canvas"></div>
     <div id="ui-layer">
         <h1>Zen Garden</h1>
@@ -170,7 +189,7 @@
             display.style.opacity = 0;
             setTimeout(() => {
                 display.innerText = `"${text}"`;
-                display.style.opacity = 0.6;
+                display.style.opacity = 0.7;
             }, 500);
         }
 
@@ -219,7 +238,7 @@
         }
 
         function draw() {
-            background(10, 10, 10, 40);
+            background(5, 5, 5, 40);
             if (!currentSeed) return;
 
             const h = hashString(currentSeed);
