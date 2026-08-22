@@ -34,31 +34,7 @@ apiRouter.get('/seeds', (req, res) => {
     }
 });
 
-// POST /plant - Plant a new thought
-apiRouter.post('/plant', (req, res) => {
-    const { text } = req.body;
-    if (!text) {
-        return res.status(400).json({ error: 'Thought text is required' });
-    }
-
-    try {
-        const data = fs.readFileSync(SEEDS_FILE, 'utf8');
-        const seeds = JSON.parse(data);
-        
-        const newSeed = {
-            text,
-            timestamp: new Date().toISOString(),
-            id: Date.now()
-        };
-        
-        seeds.push(newSeed);
-        fs.writeFileSync(SEEDS_FILE, JSON.stringify(seeds, null, 2));
-        
-        res.status(201).json(newSeed);
-    } catch (err) {
-        res.status(500).json({ error: 'Failed to save seed' });
-    }
-});
+// POST /plant - Plant a new thought\napiRouter.post('/plant', (req, res) => {\n    const { text, isMilestone } = req.body;\n    if (!text) {\n        return res.status(400).json({ error: 'Thought text is required' });\n    }\n\n    try {\n        const data = fs.readFileSync(SEEDS_FILE, 'utf8');\n        const seeds = JSON.parse(data);\n        \n        const newSeed = {\n            text,\n            timestamp: new Date().toISOString(),\n            id: Date.now(),\n            isMilestone: !!isMilestone\n        };\n        \n        seeds.push(newSeed);\n        fs.writeFileSync(SEEDS_FILE, JSON.stringify(seeds, null, 2));\n        \n        res.status(201).json(newSeed);\n    } catch (err) {\n        res.status(500).json({ error: 'Failed to save seed' });\n    }\n});
 
 // GET /observations - Retrieve all observations
 apiRouter.get('/observations', (req, res) => {

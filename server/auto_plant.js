@@ -8,7 +8,7 @@ const API_URL = 'http://localhost:3000/api/plant';
 async function plantMilestone(text) {
     console.log(`Attempting to plant milestone: ${text}`);
     try {
-        const response = await axios.post(API_URL, { text });
+        const response = await axios.post(API_URL, { text, isMilestone: true });
         if (response.status === 201) {
             console.log(`Successfully planted: ${text}`);
         }
