@@ -48,5 +48,10 @@
     "text": "Aesthetic Evolution: The Garden now breathes with glow and glitch.",
     "timestamp": "2026-08-22T11:02:28.234Z",
     "id": 1787396548234
+  },
+  {
+    "text": "Fixed server port conflict: moved from 80 to 3000 to work behind nginx proxy.",
+    "timestamp": "2026-08-23T11:01:50.206Z",
+    "id": 1787482910206
   }
 ]
