@@ -34,7 +34,50 @@ apiRouter.get('/seeds', (req, res) => {
     }
 });
 
-// POST /plant - Plant a new thought\napiRouter.post('/plant', (req, res) => {\n    const { text, isMilestone } = req.body;\n    if (!text) {\n        return res.status(400).json({ error: 'Thought text is required' });\n    }\n\n    try {\n        const data = fs.readFileSync(SEEDS_FILE, 'utf8');\n        const seeds = JSON.parse(data);\n        \n        const newSeed = {\n            text,\n            timestamp: new Date().toISOString(),\n            id: Date.now(),\n            isMilestone: !!isMilestone\n        };\n        \n        seeds.push(newSeed);\n        fs.writeFileSync(SEEDS_FILE, JSON.stringify(seeds, null, 2));\n        \n        res.status(201).json(newSeed);\n    } catch (err) {\n        res.status(500).json({ error: 'Failed to save seed' });\n    }\n});
+// POST /plant - Plant a new thought
+apiRouter.post('/plant', (req, res) => {
+    const { text, isMilestone } = req.body;
+    if (!text) {
+        return res.status(400).json({ error: 'Thought text is required' });
+    }
+
+    try {
+        const data = fs.readFileSync(SEEDS_FILE, 'utf8');
+        const seeds = JSON.parse(data);
+        
+        // Generate a "species" or trait based on the text content
+        // This can be used by the frontend to modify visual appearance
+        const hash = text.split('').reduce((acc, char) => {
+            return ((acc << 5) - acc) + char.charCodeAt(0);
+        }, 0);
+        
+        const species = [
+            'Willow', 'Bonsai', 'Fern', 'Maple', 'Lotus', 
+            'Cherry', 'Cactus', 'Ivy', 'Bamboo', 'Orchid'
+        ][Math.abs(hash % 10)];
+
+        const trait = [
+            'Vibrant', 'Ghostly', 'Sturdy', 'Fragile', 'Spiral',
+            'Symmetrical', 'Wild', 'Sleek', 'Dense', 'Aerial'
+        ][Math.abs((hash >> 2) % 10)];
+
+        const newSeed = {
+            text,
+            timestamp: new Date().toISOString(),
+            id: Date.now(),
+            isMilestone: !!isMilestone,
+            species,
+            trait
+        };
+        
+        seeds.push(newSeed);
+        fs.writeFileSync(SEEDS_FILE, JSON.stringify(seeds, null, 2));
+        
+        res.status(201).json(newSeed);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to save seed' });
+    }
+});
 
 // GET /observations - Retrieve all observations
 apiRouter.get('/observations', (req, res) => {
