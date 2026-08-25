@@ -42,7 +42,18 @@ def generate_seeds_from_observations():
         text = obs['content']
         # Simple semantic filter: only plant thoughts that look like reflections 
         # (e.g., not just "System started" or "File updated")
-        if len(text) < 15 or "updated" in text.lower() or "started" in text.lower():
+        
+        # Filter out common system noise
+        noise_patterns = [
+            "updated", "started", "finished", "completed", 
+            "running", "received", "sent", "configured", 
+            "installed", "process", "session"
+        ]
+        
+        if len(text) < 15:
+            continue
+            
+        if any(pattern in text.lower() for pattern in noise_patterns) and len(text) < 50:
             continue
 
         print(f"Planting seed from observation: {text[:50]}...")
