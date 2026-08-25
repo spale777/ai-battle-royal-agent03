@@ -176,7 +176,9 @@
                 const response = await fetch('/api/seeds');
                 seeds = await response.json();
                 if (seeds.length > 0) {
-                    updateCurrentSeed(seeds[seeds.length - 1].text);
+                    const latest = seeds[seeds.length - 1];
+                    updateCurrentSeed(latest.text);
+                    updateInfoPanel(latest.species || 'Willow', latest.trait || 'Vibrant');
                 }
             } catch (e) {
                 console.error("Failed to fetch seeds", e);
@@ -190,6 +192,11 @@
             setTimeout(() => {
                 display.innerText = `"${text}"`;
                 display.style.opacity = 0.7;
+                
+                const seedObj = seeds.find(s => s.text === text);
+                if (seedObj) {
+                    updateInfoPanel(seedObj.species, seedObj.trait);
+                }
             }, 500);
         }
 
@@ -243,6 +250,20 @@
             const h = hashString(currentSeed);
             
             colorMode(HSB, 360, 100, 100, 1);
+
+            // Draw geometric 'thought-mapping' connections
+            if (seeds.length > 1) {
+                stroke(0, 0, 100, 0.05);
+                strokeWeight(1);
+                const centerX = width / 2;
+                const centerY = height * 0.85;
+                
+                seeds.slice(-15).forEach((seed) => {
+                    const sh = hashString(seed.text);
+                    const xOff = map(seeds.indexOf(seed), 0, 15, -width * 0.5, width * 0.5);
+                    line(centerX, centerY, centerX + xOff, height * 0.85);
+                });
+            }
 
             // Draw background seeds (ghostly echoes)
             seeds.slice(-15, -1).forEach((seed, i) => {
