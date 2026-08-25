@@ -46,20 +46,101 @@ apiRouter.post('/plant', (req, res) => {
         const seeds = JSON.parse(data);
         
         // Generate a "species" or trait based on the text content
-        // This can be used by the frontend to modify visual appearance
-        const hash = text.split('').reduce((acc, char) => {
-            return ((acc << 5) - acc) + char.charCodeAt(0);
-        }, 0);
+        const speciesMap = {
+            'philosophical': 'Bonsai',
+            'technical': 'Bamboo',
+            'emotional': 'Willow',
+            'creative': 'Cherry',
+            'structured': 'Cactus',
+            'growth': 'Fern',
+            'peaceful': 'Lotus',
+            'complex': 'Ivy',
+            'elegant': 'Orchid',
+            'resilient': 'Maple',
+            'analytical': 'Pine',
+            'exploratory': 'Vine',
+            'stable': 'Cedar',
+            'fragile': 'Lily'
+        };
         
-        const species = [
-            'Willow', 'Bonsai', 'Fern', 'Maple', 'Lotus', 
-            'Cherry', 'Cactus', 'Ivy', 'Bamboo', 'Orchid'
-        ][Math.abs(hash % 10)];
+        const traitMap = {
+            'deep': 'Symmetrical',
+            'fleeting': 'Ghostly',
+            'strong': 'Sturdy',
+            'fragile': 'Fragile',
+            'curious': 'Spiral',
+            'chaotic': 'Wild',
+            'refined': 'Sleek',
+            'dense': 'Dense',
+            'airy': 'Aerial',
+            'vibrant': 'Vibrant',
+            'rhythmic': 'Pulsing',
+            'asymmetric': 'Erratic',
+            'ancient': 'Gnarly',
+            'crystalline': 'Prismatic'
+        };
 
-        const trait = [
-            'Vibrant', 'Ghostly', 'Sturdy', 'Fragile', 'Spiral',
-            'Symmetrical', 'Wild', 'Sleek', 'Dense', 'Aerial'
-        ][Math.abs((hash >> 2) % 10)];
+        const keywords = {
+            'philosophical': ['why', 'think', 'believe', 'meaning', 'existence', 'truth', 'essence', 'metaphysics', 'logic'],
+            'technical': ['code', 'system', 'build', 'logic', 'function', 'api', 'data', 'node', 'script', 'compiler', 'architecture'],
+            'emotional': ['feel', 'wish', 'hope', 'long', 'sad', 'happy', 'love', 'fear', 'emotion', 'heart', 'spirit'],
+            'creative': ['art', 'design', 'imagine', 'dream', 'create', 'color', 'shape', 'poetry', 'composition'],
+            'structured': ['rule', 'plan', 'order', 'step', 'process', 'limit', 'bound', 'framework', 'protocol'],
+            'growth': ['learn', 'grow', 'evolve', 'become', 'change', 'improve', 'expand', 'development', 'progress'],
+            'peaceful': ['still', 'calm', 'quiet', 'zen', 'silence', 'rest', 'breath', 'serene', 'tranquil'],
+            'complex': ['tangle', 'web', 'knot', 'labyrinth', 'maze', 'intertwine', 'network', 'multifaceted'],
+            'elegant': ['simple', 'pure', 'clear', 'minimal', 'grace', 'smooth', 'refined', 'aesthetic'],
+            'resilient': ['survive', 'endure', 'hard', 'strong', 'last', 'persistent', 'tough', 'unyielding'],
+            'analytical': ['analyze', 'evaluate', 'pattern', 'derive', 'compute', 'reason', 'audit', 'metrics'],
+            'exploratory': ['seek', 'discover', 'wander', 'search', 'explore', 'probe', 'venture', 'find'],
+            'stable': ['steady', 'fixed', 'constant', 'reliable', 'anchor', 'base', 'foundation'],
+            'fragile': ['soft', 'delicate', 'thin', 'break', 'whisper', 'brittle', 'fleeting']
+        };
+
+        const traitKeywords = {
+            'deep': ['deep', 'profound', 'core', 'root', 'fundamental', 'abyss', 'bottomless'],
+            'fleeting': ['moment', 'blink', 'temporary', 'passing', 'fade', 'transient', 'brief'],
+            'strong': ['power', 'force', 'solid', 'firm', 'weight', 'massive', 'dominant'],
+            'fragile': ['soft', 'delicate', 'thin', 'break', 'whisper', 'fragile', 'tender'],
+            'curious': ['wonder', 'question', 'ask', 'strange', 'new', 'peculiar', 'investigate'],
+            'chaotic': ['random', 'wild', 'mess', 'storm', 'clash', 'erratic', 'discord'],
+            'refined': ['exact', 'precise', 'sharp', 'perfect', 'polished', 'sophisticated', 'curated'],
+            'dense': ['heavy', 'thick', 'many', 'crowded', 'full', 'saturated', 'compact'],
+            'airy': ['light', 'float', 'wind', 'cloud', 'space', 'ethereal', 'weightless'],
+            'vibrant': ['bright', 'glow', 'pulse', 'alive', 'energy', 'electric', 'neon'],
+            'rhythmic': ['beat', 'cycle', 'repeat', 'wave', 'oscillation', 'pulse', 'tempo'],
+            'asymmetric': ['offset', 'lean', 'skew', 'unbalanced', 'drift', 'slant'],
+            'ancient': ['old', 'century', 'epoch', 'primitive', 'legacy', 'forgotten', 'dust'],
+            'crystalline': ['glass', 'prism', 'facet', 'sharp', 'reflect', 'refract', 'geometric']
+        };
+
+        let species = 'Willow';
+        let trait = 'Vibrant';
+
+        for (const [category, words] of Object.entries(keywords)) {
+            if (words.some(word => text.toLowerCase().includes(word))) {
+                species = speciesMap[category];
+                break;
+            }
+        }
+
+        for (const [category, words] of Object.entries(traitKeywords)) {
+            if (words.some(word => text.toLowerCase().includes(word))) {
+                trait = traitMap[category];
+                break;
+            }
+        }
+
+        // Fallback to hash if no keywords found
+        if (species === 'Willow' && trait === 'Vibrant') {
+            const hash = text.split('').reduce((acc, char) => {
+                return ((acc << 5) - acc) + char.charCodeAt(0);
+            }, 0);
+            const speciesList = ['Willow', 'Bonsai', 'Fern', 'Maple', 'Lotus', 'Cherry', 'Cactus', 'Ivy', 'Bamboo', 'Orchid'];
+            const traitList = ['Vibrant', 'Ghostly', 'Sturdy', 'Fragile', 'Spiral', 'Symmetrical', 'Wild', 'Sleek', 'Dense', 'Aerial'];
+            species = speciesList[Math.abs(hash % 10)];
+            trait = traitList[Math.abs((hash >> 2) % 10)];
+        }
 
         const newSeed = {
             text,

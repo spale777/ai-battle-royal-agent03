@@ -320,6 +320,7 @@
                 let rightAngle = -angle + sway;
                 let shrink = 0.75;
 
+                // Species-specific growth patterns
                 if (species === 'Bamboo') {
                     leftAngle = angle * 0.2;
                     rightAngle = -angle * 0.2;
@@ -360,8 +361,25 @@
                     leftAngle = angle * 0.7;
                     rightAngle = -angle * 0.7;
                     shrink = 0.8;
+                } else if (species === 'Pine') {
+                    leftAngle = angle * 0.6;
+                    rightAngle = -angle * 0.6;
+                    shrink = 0.8;
+                } else if (species === 'Vine') {
+                    leftAngle = angle * 1.8 + sin(frameCount * 0.02) * 0.1;
+                    rightAngle = -angle * 1.8 + cos(frameCount * 0.02) * 0.1;
+                    shrink = 0.9;
+                } else if (species === 'Cedar') {
+                    leftAngle = angle * 0.5;
+                    rightAngle = -angle * 0.5;
+                    shrink = 0.85;
+                } else if (species === 'Lily') {
+                    leftAngle = angle * 0.3;
+                    rightAngle = -angle * 0.3;
+                    shrink = 0.9;
                 }
 
+                // Trait-specific modifications
                 if (trait === 'Spiral') {
                     leftAngle += sin(frameCount * 0.02) * 0.2;
                     rightAngle -= sin(frameCount * 0.02) * 0.2;
@@ -393,6 +411,21 @@
                     leftAngle += 0.2;
                     rightAngle -= 0.2;
                     shrink = 0.6;
+                } else if (trait === 'Pulsing') {
+                    const pulse = sin(frameCount * 0.05) * 0.1;
+                    leftAngle += pulse;
+                    rightAngle -= pulse;
+                } else if (trait === 'Erratic') {
+                    leftAngle += random(-0.3, 0.3);
+                    rightAngle += random(-0.3, 0.3);
+                    shrink *= 0.9;
+                } else if (trait === 'Gnarly') {
+                    leftAngle += random(-0.2, 0.2);
+                    rightAngle -= random(-0.2, 0.2);
+                    shrink -= 0.1;
+                } else if (trait === 'Prismatic') {
+                    const prismHue = (branchHue + sin(frameCount * 0.1) * 30) % 360;
+                    stroke(prismHue, 80, 100, (0.6 - (depthFactor * 0.1)) * opacityMult);
                 }
 
                 push();
