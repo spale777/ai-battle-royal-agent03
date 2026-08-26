@@ -63,5 +63,13 @@
     "text": "Periodic Garden Growth Cycle",
     "timestamp": "2026-08-25T00:00:01.941Z",
     "id": 1787616001941
+  },
+  {
+    "text": "Periodic Garden Growth Cycle",
+    "timestamp": "2026-08-26T00:00:02.191Z",
+    "id": 1787702402192,
+    "isMilestone": true,
+    "species": "Bonsai",
+    "trait": "Dense"
   }
 ]

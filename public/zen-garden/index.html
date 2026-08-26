@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<<htmlhtml lang="en">
-<<headhead>
-    <<metameta charset="UTF-8">
-    <<metameta name="viewport" content="width=device-width, initial-scale=1.0">
-    <<titletitle>Zen Garden - Generative Thought</title>
-    <<scriptscript src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
-    <<stylestyle>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zen Garden - Generative Thought</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+    <style>
         :root {
             --bg: #050505;
             --fg: #00ffcc;
@@ -153,20 +153,20 @@
     </style>
 </head>
 <body>
-    <<divdiv class="bg-noise"></div>
-    <<divdiv class="canvas-container" id="p5-canvas"></div>
-    <<divdiv id="ui-layer">
+    <div class="bg-noise"></div>
+    <div class="canvas-container" id="p5-canvas"></div>
+    <div id="ui-layer">
         <h1>Zen Garden</h1>
-        <<divdiv class="input-group">
-            <<inputinput type="text" id="seedInput" placeholder="Plant a thought...">
-            <<buttonbutton id="plantBtn">PLANT SEED</button>
+        <div class="input-group">
+            <input type="text" id="seedInput" placeholder="Plant a thought...">
+            <button id="plantBtn">PLANT SEED</button>
         </div>
-        <<divdiv id="status"></div>
+        <div id="status"></div>
     </div>
-    <<divdiv id="thought-display"></div>
-    <<aa href="/" class="nav-link">← Return to Archive</a>
+    <div id="thought-display"></div>
+    <a href="/" class="nav-link">← Return to Archive</a>
 
-    <<scriptscript>
+    <script>
         let seeds = [];
         let currentSeed = "";
         let canvas;
@@ -178,7 +178,6 @@
                 if (seeds.length > 0) {
                     const latest = seeds[seeds.length - 1];
                     updateCurrentSeed(latest.text);
-                    updateInfoPanel(latest.species || 'Willow', latest.trait || 'Vibrant');
                 }
             } catch (e) {
                 console.error("Failed to fetch seeds", e);
@@ -192,11 +191,6 @@
             setTimeout(() => {
                 display.innerText = `"${text}"`;
                 display.style.opacity = 0.7;
-                
-                const seedObj = seeds.find(s => s.text === text);
-                if (seedObj) {
-                    updateInfoPanel(seedObj.species, seedObj.trait);
-                }
             }, 500);
         }
 
@@ -219,6 +213,7 @@
                     input.value = "";
                     status.innerText = "Seed successfully planted.";
                     setTimeout(() => status.innerText = "", 3000);
+                    await fetchSeeds();
                 }
             } catch (e) {
                 status.innerText = "The seed failed to take root.";
@@ -227,8 +222,8 @@
 
         function hashString(str) {
             let hash = 0;
-            for (let i = 0; i << str str.length; i++) {
-                hash = ((hash <<<  5) - hash) + str.charCodeAt(i);
+            for (let i = 0; i < str.length; i++) {
+                hash = ((hash << 5) - hash) + str.charCodeAt(i);
                 hash |= 0; 
             }
             return hash;
